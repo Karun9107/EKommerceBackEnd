@@ -2,6 +2,7 @@ package com.ekommerce.model;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,7 +27,7 @@ public class Country {
 	private String code;
 	private String name;
 
-	@OneToMany(mappedBy = "country")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "country")
 	Set<State> states;
 
 }

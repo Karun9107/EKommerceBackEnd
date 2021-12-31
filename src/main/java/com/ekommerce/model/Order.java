@@ -41,7 +41,7 @@ public class Order {
 	@Column(name="total_quantity")
 	private int totalQuantity;
 	
-	@OneToOne
+	@OneToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="billing_address_id", referencedColumnName = "id")
 	private Address billingAddress;
 	
@@ -49,7 +49,7 @@ public class Order {
 	@JoinColumn(name="customer_id")
 	private Customer customer;
 	
-	@OneToOne
+	@OneToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="shipping_address_id", referencedColumnName = "id")
 	private Address shippingAddress;
 	
@@ -69,5 +69,12 @@ public class Order {
 	public void addOrderItem(OrderItem orderItem) {
 		orderItems.add(orderItem);
 		orderItem.setOrder(this);
+	}
+	
+	public void addAddress(Address shippingAddress, Address billingAddress) {
+		this.billingAddress = billingAddress;
+		this.shippingAddress = shippingAddress;
+		billingAddress.setOrder(this);
+		shippingAddress.setOrder(this);
 	}
 }

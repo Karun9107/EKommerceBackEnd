@@ -1,9 +1,9 @@
 package com.ekommerce.model;
 
-import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,7 +22,7 @@ import lombok.Setter;
 public class Customer {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private BigInteger id;
+	private Long id;
 	
 	@Column(name="first_name")
 	private String firstName;
@@ -32,7 +32,7 @@ public class Customer {
 	
 	private String email;
 	
-	@OneToMany(mappedBy = "customer")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "customer")
 	private Set<Order>orders = new HashSet<>();
 	
 	public void addOrder(Order order) {
