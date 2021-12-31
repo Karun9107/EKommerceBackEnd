@@ -14,8 +14,10 @@ import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
+import com.ekommerce.model.Country;
 import com.ekommerce.model.Product;
 import com.ekommerce.model.ProductCategory;
+import com.ekommerce.model.State;
 
 @Configuration
 public class EKommerceDataRestConfig implements RepositoryRestConfigurer {
@@ -25,17 +27,23 @@ public class EKommerceDataRestConfig implements RepositoryRestConfigurer {
 	
 	@Override
 	public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config, CorsRegistry cors) {
-		HttpMethod theUnsupportedActions[] = {HttpMethod.PUT, HttpMethod.DELETE, HttpMethod.POST};
-		config.getExposureConfiguration()
-		.forDomainType(Product.class)
-		.withItemExposure((metadata, httpMethods)->httpMethods.disable(theUnsupportedActions))
-		.withCollectionExposure((metadata, httpMethods)->httpMethods.disable(theUnsupportedActions));
+
+		Class<?>[] readOnlyClasses = {Product.class, ProductCategory.class, Country.class, State.class};
+		HttpMethod[] unsupportedActions = {HttpMethod.PUT, HttpMethod.DELETE, HttpMethod.POST};
+		
+		for(Class<?> klass : readOnlyClasses) {
+			disableHttpMethods(config, klass, unsupportedActions);
+		}
+		
+		exposeIds(config);
+	}
+	
+	private <T> void disableHttpMethods(RepositoryRestConfiguration config, Class<T> klass, HttpMethod[] unsupportedActions) {
 		
 		config.getExposureConfiguration()
-		.forDomainType(ProductCategory.class)
-		.withItemExposure((metadata, httpMethods)->httpMethods.disable(theUnsupportedActions))
-		.withCollectionExposure((metadata, httpMethods)->httpMethods.disable(theUnsupportedActions));
-		exposeIds(config);
+		.forDomainType(klass)
+		.withItemExposure((metadata, httpMethods)->httpMethods.disable(unsupportedActions))
+		.withCollectionExposure((metadata, httpMethods)->httpMethods.disable(unsupportedActions));
 	}
 	
 	private void exposeIds(RepositoryRestConfiguration config) {
